@@ -12,7 +12,9 @@
   },
   "files": [
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE",
+    "SECURITY.md"
   ],
   "scripts": {
     "build": "node --check src/index.js",
@@ -22,6 +24,14 @@
     "release:check": "npm test && npm run build && npm run smoke"
   },
   "keywords": [],
-  "author": "StackForge User",
-  "license": "MIT"
+  "author": "Roger Chappel",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rogerchappel/scriptlint.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rogerchappel/scriptlint/issues"
+  },
+  "homepage": "https://github.com/rogerchappel/scriptlint#readme"
 }
