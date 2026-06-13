@@ -35,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/rogerchappel/scriptlint/issues"
   },
-  "homepage": "https://github.com/rogerchappel/scriptlint#readme"
+  "homepage": "https://github.com/rogerchappel/scriptlint#readme",
+  "engines": {
+    "node": ">=20"
+  }
 }
