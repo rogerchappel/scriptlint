@@ -4,11 +4,11 @@ Script and package command linting for local project hygiene.
 
 ## Status
 
-This repository is currently a planning and scaffolding repo. It contains project governance, product notes, and release hygiene files, but it does not yet include the package implementation advertised by `package.json`. Treat it as not ready for installation or production use until `src/` and real usage examples land.
+This repository is an early-stage, local-first CLI scaffold for script and package-command linting. It currently ships a minimal `scriptlint` command with help/version output, fixture-backed CLI tests, and release hygiene checks. Treat it as pre-1.0: useful for validating the package surface, but not yet a full script analysis engine.
 
 ## Install
 
-There is no supported install path yet. For local stewardship or planning work, install dependencies only when a future implementation adds them:
+Install dependencies before running the local CLI or verification checks:
 
 ```sh
 npm install
@@ -16,7 +16,21 @@ npm install
 
 ## Use
 
-No runtime API or CLI is available yet. Start with the planning material in `docs/PRD.md` and `ROADMAP.md` before implementing package entry points.
+Run the current CLI scaffold directly from the repo:
+
+```sh
+node src/index.js --help
+node src/index.js --version
+```
+
+After installation as a package, the exposed binary is:
+
+```sh
+scriptlint --help
+scriptlint --version
+```
+
+See `docs/PRD.md` and `ROADMAP.md` for the planned linting rules and package-command analysis scope.
 
 ## Verify
 
@@ -24,11 +38,9 @@ Run the available repository checks before opening a pull request:
 
 ```sh
 npm test
-```
-
-If `release:check` exists in `package.json`, run it as the broader release-readiness gate:
-
-```sh
+npm run build
+npm run smoke
+npm run package:smoke
 npm run release:check
 ```
 
@@ -41,8 +53,8 @@ npm run release:readiness
 
 ## Limitations
 
-- The package entry points are placeholders until an implementation is added.
-- README examples should be updated with real commands before any release claim is made.
+- The CLI currently exposes only help and version commands.
+- Script analysis rules and package-command checks are still planned work.
 - Security and production posture should be reassessed after the first implementation lands.
 
 ## Contributing
