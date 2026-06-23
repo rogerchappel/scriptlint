@@ -23,7 +23,8 @@
     "test": "node --test",
     "smoke": "node src/index.js --help && node src/index.js --version",
     "package:smoke": "npm pack --dry-run",
-    "release:check": "npm test && npm run build && npm run smoke && npm run package:smoke"
+    "release:check": "npm test && npm run build && npm run smoke && npm run package:smoke",
+    "release:readiness": "node scripts/validate-release-readiness.mjs"
   },
   "keywords": [],
   "author": "Roger Chappel",
