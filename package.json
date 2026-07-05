@@ -26,7 +26,13 @@
     "release:check": "npm test && npm run build && npm run smoke && npm run package:smoke",
     "release:readiness": "node scripts/validate-release-readiness.mjs"
   },
-  "keywords": [],
+  "keywords": [
+    "scripts",
+    "lint",
+    "package-json",
+    "release-readiness",
+    "cli"
+  ],
   "author": "Roger Chappel",
   "license": "MIT",
   "repository": {
