@@ -10,6 +10,12 @@ format and uses semantic versioning when versioned releases are published.
 ### Added
 
 - Added a release-readiness checklist for local verification and package review.
+- Added deterministic package-identity and packed-tarball CLI checks.
+
+### Changed
+
+- Renamed the publishable package to `@rogerchappel/scriptlint` while preserving
+  the `scriptlint` command.
 
 - Initial project setup.
 

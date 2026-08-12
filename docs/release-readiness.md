@@ -8,13 +8,17 @@ Use this checklist before cutting a release or asking for a release review.
 npm install
 npm run test
 npm run smoke
+npm run release:readiness
 npm run package:smoke
 npm run release:check
 ```
 
 ## Package contents
 
-Run `npm run package:smoke` when available and review the dry-run file list for only the built runtime, README, license, and other intentional release assets.
+`npm run release:readiness` verifies the owner-scoped package identity and the
+intentional `scriptlint` binary mapping without contacting the npm registry.
+`npm run package:smoke` packs the project, installs that tarball in a temporary
+directory, verifies the packed manifest, and runs the installed CLI.
 
 ## Notes
 
