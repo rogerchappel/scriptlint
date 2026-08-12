@@ -20,6 +20,12 @@ intentional `scriptlint` binary mapping without contacting the npm registry.
 `npm run package:smoke` packs the project, installs that tarball in a temporary
 directory, verifies the packed manifest, and runs the installed CLI.
 
+The release workflows independently pack exactly one tarball and capture its
+filename. A pull request dry run passes that tarball to `npm publish --dry-run
+--access public`. A version tag passes the same captured tarball to
+`npm publish --access public --provenance` and attaches it to the GitHub release,
+so npm and GitHub receive the artifact that was actually verified.
+
 ## Notes
 
 - Keep README examples aligned with the fixture-backed smoke command.
