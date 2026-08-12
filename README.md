@@ -14,6 +14,12 @@ Install dependencies before running the local CLI or verification checks:
 npm install
 ```
 
+For a published release, install the owner-scoped package globally:
+
+```sh
+npm install --global @rogerchappel/scriptlint
+```
+
 ## Use
 
 Run the current CLI scaffold directly from the repo:
@@ -23,7 +29,7 @@ node src/index.js --help
 node src/index.js --version
 ```
 
-After installation as a package, the exposed binary is:
+The scoped package intentionally exposes the unscoped `scriptlint` binary:
 
 ```sh
 scriptlint --help

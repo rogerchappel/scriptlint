@@ -2,7 +2,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const packagePath = path.join(root, 'package.json');
+const packagePath = process.env.RELEASE_READINESS_PACKAGE_PATH
+  ? path.resolve(process.env.RELEASE_READINESS_PACKAGE_PATH)
+  : path.join(root, 'package.json');
 const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 const scripts = packageJson.scripts ?? {};
 const failures = [];
@@ -12,6 +14,10 @@ function requireField(condition, message) {
 }
 
 requireField(packageJson.repository, 'package.json must declare repository metadata');
+requireField(packageJson.name !== 'scriptlint', 'package.json must not use the third-party unscoped scriptlint identity');
+requireField(packageJson.name === '@rogerchappel/scriptlint', 'package.json must use the owner-scoped @rogerchappel/scriptlint identity');
+requireField(packageJson.bin?.scriptlint === './src/index.js', 'package.json must preserve the scriptlint CLI mapping');
+requireField(packageJson.publishConfig?.access === 'public', 'scoped package must publish with public access');
 requireField(Array.isArray(packageJson.files) && packageJson.files.length > 0, 'package.json must declare a non-empty files allowlist');
 requireField(scripts['package:smoke'], 'package.json scripts must include package:smoke');
 requireField(scripts['release:check'], 'package.json scripts must include release:check');
