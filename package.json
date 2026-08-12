@@ -1,5 +1,5 @@
 {
-  "name": "scriptlint",
+  "name": "@rogerchappel/scriptlint",
   "version": "0.1.0",
   "description": "ScriptLint is a local-first TypeScript CLI that scans shell scripts (bash, zsh, fish) across a project for anti-patterns, security.",
   "type": "module",
@@ -35,6 +35,9 @@
   ],
   "author": "Roger Chappel",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rogerchappel/scriptlint.git"
