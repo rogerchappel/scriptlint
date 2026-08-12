@@ -26,6 +26,7 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+          registry-url: https://registry.npmjs.org
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then
@@ -43,6 +44,13 @@ jobs:
         run: node /tmp/releasebox/bin/releasebox.js check .
       - name: Run release checks
         run: npm run release:check
+      - name: Pack release artifact
+        id: pack
+        run: |
+          npm pack --json > npm-pack.json
+          echo "tarball=$(node -p \"JSON.parse(require('fs').readFileSync('npm-pack.json', 'utf8'))[0].filename\")" >> "$GITHUB_OUTPUT"
+      - name: Exercise npm publication
+        run: npm publish "${{ steps.pack.outputs.tarball }}" --dry-run --access public
       - name: Release notes preview
         run: |
           node /tmp/releasebox/bin/releasebox.js notes . > release-notes-preview.md
