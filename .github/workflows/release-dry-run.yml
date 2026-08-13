@@ -48,7 +48,8 @@ jobs:
         id: pack
         run: |
           npm pack --json > npm-pack.json
-          echo "tarball=$(node -p \"JSON.parse(require('fs').readFileSync('npm-pack.json', 'utf8'))[0].filename\")" >> "$GITHUB_OUTPUT"
+          tarball=$(node -p "JSON.parse(require('fs').readFileSync('npm-pack.json', 'utf8'))[0].filename")
+          printf 'tarball=%s\n' "$tarball" >> "$GITHUB_OUTPUT"
       - name: Exercise npm publication
         run: npm publish "${{ steps.pack.outputs.tarball }}" --dry-run --access public
       - name: Release notes preview

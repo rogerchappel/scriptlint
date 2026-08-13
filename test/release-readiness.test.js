@@ -8,6 +8,31 @@ import { test } from 'node:test';
 
 const execFileAsync = promisify(execFile);
 
+async function executePackStep(workflowFile) {
+  const workflow = await fs.readFile(path.join('.github', 'workflows', workflowFile), 'utf8');
+  const match = workflow.match(/      - name: Pack release artifact\n        id: pack\n        run: \|\n((?:          .*\n)+)/);
+  assert.ok(match, `${workflowFile} must contain the pack step`);
+
+  const fixtureDir = await fs.mkdtemp(path.join(os.tmpdir(), 'scriptlint-pack-step-'));
+  const binDir = path.join(fixtureDir, 'bin');
+  const outputPath = path.join(fixtureDir, 'github-output');
+  await fs.mkdir(binDir);
+  await fs.writeFile(
+    path.join(binDir, 'npm'),
+    '#!/bin/sh\nprintf \'[{"filename":"rogerchappel-scriptlint-0.1.0.tgz"}]\\n\'\n',
+    { mode: 0o755 },
+  );
+
+  const script = match[1].replace(/^ {10}/gm, '');
+  await execFileAsync('bash', ['-n', '-c', script]);
+  await execFileAsync('bash', ['-euo', 'pipefail', '-c', script], {
+    cwd: fixtureDir,
+    env: { ...process.env, GITHUB_OUTPUT: outputPath, PATH: `${binDir}:${process.env.PATH}` },
+  });
+
+  assert.equal(await fs.readFile(outputPath, 'utf8'), 'tarball=rogerchappel-scriptlint-0.1.0.tgz\n');
+}
+
 test('release readiness rejects the known third-party package identity offline', async () => {
   const fixtureDir = await fs.mkdtemp(path.join(os.tmpdir(), 'scriptlint-readiness-'));
   const packageJson = JSON.parse(await fs.readFile('package.json', 'utf8'));
@@ -29,6 +54,12 @@ test('release readiness rejects the known third-party package identity offline',
 test('release readiness verifies a single captured artifact is published and released', async () => {
   await execFileAsync('node', ['scripts/validate-release-readiness.mjs']);
 });
+
+for (const workflowFile of ['release.yml', 'release-dry-run.yml']) {
+  test(`${workflowFile} pack step is valid shell and writes the packed filename`, async () => {
+    await executePackStep(workflowFile);
+  });
+}
 
 for (const [name, file, mutate, expected] of [
   ['omitted publication', 'release.yml', (text) => text.replace(/      - name: Publish package to npm\n        run:.*\n/, ''), /must publish the captured tarball/],
