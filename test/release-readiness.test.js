@@ -68,6 +68,9 @@ for (const [name, file, mutate, expected] of [
   ['uncaptured GitHub artifact', 'release.yml', (text) => text.replace('"${{ steps.pack.outputs.tarball }}"\n', '*.tgz\n'), /must attach the captured tarball/],
   ['dry-run publication omitted', 'release-dry-run.yml', (text) => text.replace(/      - name: Exercise npm publication\n        run:.*\n/, ''), /must publish the captured tarball/],
   ['dry-run repacking', 'release-dry-run.yml', (text) => text.replace('npm publish', 'npm pack\n          npm publish'), /must run npm pack exactly once/],
+  ['trusted-publishing npm preparation omitted', 'release.yml', (text) => text.replace(/      - name: Prepare npm for trusted publishing\n        run: \|\n          npm install --global .*\n          npm --version\n/, ''), /must install the selected trusted-publishing npm version/],
+  ['outdated trusted-publishing npm', 'release-dry-run.yml', (text) => text.replace('NPM_VERSION: 11.5.1', 'NPM_VERSION: 10.9.8'), /must select npm 11.5.1 or later/],
+  ['npm version logging omitted', 'release-dry-run.yml', (text) => text.replace('          npm --version\n', ''), /must log the selected npm version/],
 ]) {
   test(`release readiness rejects ${name}`, async () => {
     const fixtureDir = await fs.mkdtemp(path.join(os.tmpdir(), 'scriptlint-workflows-'));
