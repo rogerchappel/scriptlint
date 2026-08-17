@@ -11,6 +11,7 @@ permissions:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  NPM_VERSION: 11.5.1
   RELEASEBOX_REF: v0.1.0
 
 jobs:
@@ -24,6 +25,10 @@ jobs:
         with:
           node-version: 22
           registry-url: https://registry.npmjs.org
+      - name: Prepare npm for trusted publishing
+        run: |
+          npm install --global "npm@$NPM_VERSION"
+          npm --version
       - name: Install dependencies
         run: |
           if [ -f package-lock.json ]; then

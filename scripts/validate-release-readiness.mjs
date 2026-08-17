@@ -57,6 +57,11 @@ if (fs.existsSync(workflowDir)) {
 }
 
 function validateArtifactHandoff(workflow, label, { publishFlags, githubRelease }) {
+  requireField(/node-version:\s*22\b/.test(workflow), `${label} must use Node 22`);
+  requireField(/NPM_VERSION:\s*(?:['"])?11\.5\.1(?:['"])?\s*$/m.test(workflow), `${label} must select npm 11.5.1 or later for trusted publishing`);
+  requireField(/npm install --global ["']npm@\$NPM_VERSION["']/.test(workflow), `${label} must install the selected trusted-publishing npm version`);
+  requireField(/npm --version/.test(workflow), `${label} must log the selected npm version`);
+
   const packCommands = workflow.match(/\bnpm pack\b/g) ?? [];
   requireField(packCommands.length === 1, `${label} must run npm pack exactly once`);
   requireField(/id:\s*pack\b/.test(workflow), `${label} pack step must have the pack id`);
