@@ -26,14 +26,18 @@ Run the current CLI scaffold directly from the repo:
 
 ```sh
 node src/index.js --help
+node src/index.js -h
 node src/index.js --version
+node src/index.js -v
 ```
 
 The scoped package intentionally exposes the unscoped `scriptlint` binary:
 
 ```sh
 scriptlint --help
+scriptlint help
 scriptlint --version
+scriptlint version
 ```
 
 See `docs/PRD.md` and `ROADMAP.md` for the planned linting rules and package-command analysis scope.
@@ -59,7 +63,7 @@ npm run release:readiness
 
 ## Limitations
 
-- The CLI currently exposes only help and version commands.
+- The CLI currently exposes only help and version commands (including the aliases shown above); unsupported arguments fail with usage guidance.
 - Script analysis rules and package-command checks are still planned work.
 - Security and production posture should be reassessed after the first implementation lands.
 
