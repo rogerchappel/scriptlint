@@ -13,9 +13,42 @@ test("scriptlint --help describes the current scaffold", async () => {
   assert.match(stdout, /Usage:/);
 });
 
+test("scriptlint accepts documented help aliases", async () => {
+  for (const args of [[], ["help"], ["-h"]]) {
+    const { stdout, stderr } = await execFileAsync("node", ["src/index.js", ...args]);
+
+    assert.equal(stderr, "");
+    assert.match(stdout, /Usage:/);
+  }
+});
+
 test("scriptlint --version prints the package version", async () => {
   const { stdout, stderr } = await execFileAsync("node", ["src/index.js", "--version"]);
 
   assert.equal(stderr, "");
   assert.equal(stdout, "0.1.0\n");
+});
+
+test("scriptlint accepts documented version aliases", async () => {
+  for (const arg of ["version", "-v"]) {
+    const { stdout, stderr } = await execFileAsync("node", ["src/index.js", arg]);
+
+    assert.equal(stderr, "");
+    assert.equal(stdout, "0.1.0\n");
+  }
+});
+
+test("scriptlint rejects unknown commands, options, and extra operands", async () => {
+  for (const args of [["frobnicate"], ["--bogus"], ["--help", "extra"]]) {
+    await assert.rejects(
+      execFileAsync("node", ["src/index.js", ...args]),
+      (error) => {
+        assert.equal(error.code, 1);
+        assert.equal(error.stdout, "");
+        assert.match(error.stderr, /Unknown argument|Unexpected extra operand/);
+        assert.match(error.stderr, /Run 'scriptlint --help' for usage\./);
+        return true;
+      },
+    );
+  }
 });
