@@ -1,7 +1,7 @@
 {
   "name": "@rogerchappel/scriptlint",
   "version": "0.1.0",
-  "description": "ScriptLint is a local-first TypeScript CLI that scans shell scripts (bash, zsh, fish) across a project for anti-patterns, security.",
+  "description": "ScriptLint is an early-stage local-first JavaScript CLI scaffold for script and package-command linting.",
   "type": "module",
   "main": "./src/index.js",
   "bin": {
