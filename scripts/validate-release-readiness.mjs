@@ -6,6 +6,7 @@ const packagePath = process.env.RELEASE_READINESS_PACKAGE_PATH
   ? path.resolve(process.env.RELEASE_READINESS_PACKAGE_PATH)
   : path.join(root, 'package.json');
 const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
+const packageRoot = path.dirname(packagePath);
 const scripts = packageJson.scripts ?? {};
 const failures = [];
 
@@ -21,6 +22,7 @@ requireField(packageJson.publishConfig?.access === 'public', 'scoped package mus
 requireField(Array.isArray(packageJson.files) && packageJson.files.length > 0, 'package.json must declare a non-empty files allowlist');
 requireField(scripts['package:smoke'], 'package.json scripts must include package:smoke');
 requireField(scripts['release:check'], 'package.json scripts must include release:check');
+requireField(fs.existsSync(path.join(packageRoot, 'package-lock.json')), 'package-lock.json must exist beside package.json');
 
 const workflowDir = process.env.RELEASE_READINESS_WORKFLOW_DIR
   ? path.resolve(process.env.RELEASE_READINESS_WORKFLOW_DIR)
@@ -36,6 +38,12 @@ if (fs.existsSync(workflowDir)) {
 
   const combined = workflowFiles.map((file) => fs.readFileSync(path.join(workflowDir, file), 'utf8')).join('\n');
   requireField(/release:check/.test(combined), 'CI workflows must run npm run release:check');
+
+  for (const file of ['ci.yml', 'release.yml', 'release-dry-run.yml']) {
+    const workflowPath = path.join(workflowDir, file);
+    requireField(fs.existsSync(workflowPath), `${file} workflow must exist`);
+    if (fs.existsSync(workflowPath)) validateFrozenInstall(fs.readFileSync(workflowPath, 'utf8'), file);
+  }
 
   const releasePath = path.join(workflowDir, 'release.yml');
   const dryRunPath = path.join(workflowDir, 'release-dry-run.yml');
@@ -54,6 +62,11 @@ if (fs.existsSync(workflowDir)) {
       githubRelease: false,
     });
   }
+}
+
+function validateFrozenInstall(workflow, label) {
+  requireField(/^\s*(?:run:\s*)?npm ci\s*$/m.test(workflow), `${label} must install project dependencies with npm ci`);
+  requireField(!/^\s*npm install\s*$/m.test(workflow), `${label} must not fall back to npm install`);
 }
 
 function validateArtifactHandoff(workflow, label, { publishFlags, githubRelease }) {
