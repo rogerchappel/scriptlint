@@ -55,6 +55,21 @@ test('release readiness verifies a single captured artifact is published and rel
   await execFileAsync('node', ['scripts/validate-release-readiness.mjs']);
 });
 
+test('release readiness requires a lockfile beside package.json', async () => {
+  const fixtureDir = await fs.mkdtemp(path.join(os.tmpdir(), 'scriptlint-unlocked-'));
+  await fs.copyFile('package.json', path.join(fixtureDir, 'package.json'));
+
+  await assert.rejects(
+    execFileAsync('node', ['scripts/validate-release-readiness.mjs'], {
+      env: { ...process.env, RELEASE_READINESS_PACKAGE_PATH: path.join(fixtureDir, 'package.json') },
+    }),
+    (error) => {
+      assert.match(error.stderr, /package-lock.json must exist beside package.json/);
+      return true;
+    },
+  );
+});
+
 for (const workflowFile of ['release.yml', 'release-dry-run.yml']) {
   test(`${workflowFile} pack step is valid shell and writes the packed filename`, async () => {
     await executePackStep(workflowFile);
@@ -71,6 +86,8 @@ for (const [name, file, mutate, expected] of [
   ['trusted-publishing npm preparation omitted', 'release.yml', (text) => text.replace(/      - name: Prepare npm for trusted publishing\n        run: \|\n          npm install --global .*\n          npm --version\n/, ''), /must install the selected trusted-publishing npm version/],
   ['outdated trusted-publishing npm', 'release-dry-run.yml', (text) => text.replace('NPM_VERSION: 11.5.1', 'NPM_VERSION: 10.9.8'), /must select npm 11.5.1 or later/],
   ['npm version logging omitted', 'release-dry-run.yml', (text) => text.replace('          npm --version\n', ''), /must log the selected npm version/],
+  ['mutable CI install fallback', 'ci.yml', (text) => text.replace('          npm ci\n', '          npm install\n'), /must install project dependencies with npm ci/],
+  ['mutable release install', 'release.yml', (text) => text.replace('run: npm ci', 'run: npm install'), /must install project dependencies with npm ci/],
 ]) {
   test(`release readiness rejects ${name}`, async () => {
     const fixtureDir = await fs.mkdtemp(path.join(os.tmpdir(), 'scriptlint-workflows-'));
