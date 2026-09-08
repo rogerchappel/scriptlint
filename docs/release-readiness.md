@@ -5,7 +5,7 @@ Use this checklist before cutting a release or asking for a release review.
 ## Local verification
 
 ```sh
-npm install
+npm ci
 npm run test
 npm run smoke
 npm run release:readiness
@@ -25,6 +25,10 @@ filename. A pull request dry run passes that tarball to `npm publish --dry-run
 --access public`. A version tag passes the same captured tarball to
 `npm publish --access public --provenance` and attaches it to the GitHub release,
 so npm and GitHub receive the artifact that was actually verified.
+
+CI and both release workflows use `npm ci` with the committed lockfile. Keep
+`package-lock.json` synchronized with `package.json`; mutable install fallbacks
+are intentionally rejected by the release-readiness checks.
 
 ## Notes
 
