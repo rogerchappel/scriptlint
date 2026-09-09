@@ -1,9 +1,11 @@
 import assert from "node:assert/strict";
 import { execFile } from "node:child_process";
+import { readFile } from "node:fs/promises";
 import { promisify } from "node:util";
 import { test } from "node:test";
 
 const execFileAsync = promisify(execFile);
+const { version } = JSON.parse(await readFile("package.json", "utf8"));
 
 test("scriptlint --help describes the current scaffold", async () => {
   const { stdout, stderr } = await execFileAsync("node", ["src/index.js", "--help"]);
@@ -26,7 +28,7 @@ test("scriptlint --version prints the package version", async () => {
   const { stdout, stderr } = await execFileAsync("node", ["src/index.js", "--version"]);
 
   assert.equal(stderr, "");
-  assert.equal(stdout, "0.1.0\n");
+  assert.equal(stdout, `${version}\n`);
 });
 
 test("scriptlint accepts documented version aliases", async () => {
@@ -34,7 +36,7 @@ test("scriptlint accepts documented version aliases", async () => {
     const { stdout, stderr } = await execFileAsync("node", ["src/index.js", arg]);
 
     assert.equal(stderr, "");
-    assert.equal(stdout, "0.1.0\n");
+    assert.equal(stdout, `${version}\n`);
   }
 });
 
