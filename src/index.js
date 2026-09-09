@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+import { createRequire } from "node:module";
+
+const { version } = createRequire(import.meta.url)("../package.json");
+
 const help = `scriptlint
 
 Early-stage local-first JavaScript CLI scaffold.
@@ -11,7 +15,6 @@ Usage:
 The implementation is intentionally minimal while the project is pre-1.0.
 See docs/PRD.md for planned scope.`;
 
-const version = "0.1.0";
 const args = process.argv.slice(2);
 const [arg] = args;
 
