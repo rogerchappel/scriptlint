@@ -18,7 +18,9 @@ npm run release:check
 `npm run release:readiness` verifies the owner-scoped package identity and the
 intentional `scriptlint` binary mapping without contacting the npm registry.
 `npm run package:smoke` packs the project, installs that tarball in a temporary
-directory, verifies the packed manifest, and runs the installed CLI.
+directory, verifies the packed manifest, and confirms the installed CLI reads
+its version from that manifest. An ordinary `npm version` bump therefore has a
+single source of truth; no CLI version literal needs a matching manual edit.
 
 The release workflows independently pack exactly one tarball and capture its
 filename. A pull request dry run passes that tarball to `npm publish --dry-run
