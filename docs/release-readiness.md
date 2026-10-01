@@ -6,10 +6,6 @@ Use this checklist before cutting a release or asking for a release review.
 
 ```sh
 npm ci
-npm run test
-npm run smoke
-npm run release:readiness
-npm run package:smoke
 npm run release:check
 ```
 
